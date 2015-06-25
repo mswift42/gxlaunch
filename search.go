@@ -5,3 +5,7 @@ type Searchresult struct {
 	path  string
 	image string
 }
+
+type Places struct {
+	location string
+}
