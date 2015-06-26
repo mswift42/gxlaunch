@@ -16,8 +16,16 @@ type Places struct {
 // Bookmarks is a slice of PLaces
 type Bookmarks []Places
 
+var bookmarks = Bookmarks{
+	{location: "/"},
+	{location: "/Documents"},
+	{location: "/Downloads"},
+	{location: "/Music"},
+	{location: "/Pictures"},
+	{location: "/Videos"},
+}
+
 // findQuery uses the 'find' command to search a given string
 // in an array of Places.
 func findQuery(query string) (Searchresult, error) {
-
 }
