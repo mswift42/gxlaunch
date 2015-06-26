@@ -12,3 +12,12 @@ type Searchresult struct {
 type Places struct {
 	location string
 }
+
+// Bookmarks is a slice of PLaces
+type Bookmarks []Places
+
+// findQuery uses the 'find' command to search a given string
+// in an array of Places.
+func findQuery(query string) (Searchresult, error) {
+
+}
