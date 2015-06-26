@@ -1,5 +1,7 @@
 package main
 
+import "os/exec"
+
 // Searchresult represents the result of any local search.
 type Searchresult struct {
 	name      string
@@ -28,4 +30,8 @@ var bookmarks = Bookmarks{
 // findQuery uses the 'find' command to search a given string
 // in an array of Places.
 func findQuery(query string) (Searchresult, error) {
+}
+
+func findCommand(loc, value string) *exec.Cmd {
+	return exec.Command("find", loc, "*"+value+"*")
 }
