@@ -30,3 +30,9 @@ func TestLocateCommand(t *testing.T) {
 	assert.Equal(cmd.Args, []string{"locate", "-l", "20",
 		"-b", "-i", "hallo"})
 }
+func TestNewSearchResult(t *testing.T) {
+	assert := assert.New(t)
+	sr := NewSearchResult("/home/severin/Documents/GoBook.pdf")
+	assert.Equal("GoBook", sr.name)
+
+}
