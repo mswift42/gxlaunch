@@ -3,6 +3,8 @@ package main
 import (
 	"os/exec"
 	"os/user"
+	"path"
+	"strings"
 )
 
 // Searchresult represents the result of any local search.
@@ -50,4 +52,15 @@ func findCommand(loc, value string) (*exec.Cmd, error) {
 // only the base name of the path is matched.
 func locateCommand(value string) *exec.Cmd {
 	return exec.Command("locate", "-l", "20", "-b", "-i", value)
+}
+
+// NewSearchResult constructs from the output of a query a
+// Searchresult struct with its name and path initialized.
+func NewSearchResult(output string) *Searchresult {
+	var sr Searchresult
+	_, file := path.Split(output)
+	sr.name = strings.Split(file, ".")[0]
+	sr.name = output
+	return &sr
+
 }
