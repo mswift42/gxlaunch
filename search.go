@@ -29,9 +29,18 @@ var bookmarks = Bookmarks{
 
 // findQuery uses the 'find' command to search a given string
 // in an array of Places.
-func findQuery(query string) (Searchresult, error) {
-}
+// func findQuery(query string) ([]Searchresult, error) {
+// }
 
+// findCommand returns a Cmd struct for the find Command
+// to search in a given location for a given value.
 func findCommand(loc, value string) *exec.Cmd {
 	return exec.Command("find", loc, "*"+value+"*")
+}
+
+// locateCommand returns a Cmd struct for the locate Command.
+// locate's output is limited to 20 results, case is ignored and
+// only the base name of the path is matched.
+func locateCommand(value string) *exec.Cmd {
+	return exec.Command("locate", "-l", "20", "-b", "-i", value)
 }
