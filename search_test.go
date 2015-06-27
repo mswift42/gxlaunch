@@ -34,5 +34,6 @@ func TestNewSearchResult(t *testing.T) {
 	assert := assert.New(t)
 	sr := NewSearchResult("/home/severin/Documents/GoBook.pdf")
 	assert.Equal("GoBook", sr.name)
+	assert.Equal(sr.fullpath, "/home/severin/Documents/GoBook.pdf")
 
 }
