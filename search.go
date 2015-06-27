@@ -35,7 +35,7 @@ var bookmarks = Bookmarks{
 // findCommand returns a Cmd struct for the find Command
 // to search in a given location for a given value.
 func findCommand(loc, value string) *exec.Cmd {
-	return exec.Command("find", loc, "*"+value+"*")
+	return exec.Command("find", loc, "-iname", "'*"+value+"*'")
 }
 
 // locateCommand returns a Cmd struct for the locate Command.
