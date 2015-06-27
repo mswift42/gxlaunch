@@ -10,7 +10,7 @@ import (
 // Searchresult represents the result of any local search.
 type Searchresult struct {
 	name      string
-	path      string
+	fullpath  string
 	thumbnail string
 }
 
@@ -60,7 +60,7 @@ func NewSearchResult(output string) *Searchresult {
 	var sr Searchresult
 	_, file := path.Split(output)
 	sr.name = strings.Split(file, ".")[0]
-	sr.name = output
+	sr.fullpath = output
 	return &sr
 
 }
