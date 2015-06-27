@@ -1,6 +1,9 @@
 package main
 
-import "os/exec"
+import (
+	"os/exec"
+	"os/user"
+)
 
 // Searchresult represents the result of any local search.
 type Searchresult struct {
@@ -19,7 +22,7 @@ type Places struct {
 type Bookmarks []Places
 
 var bookmarks = Bookmarks{
-	{location: "/"},
+	{location: ""},
 	{location: "/Documents"},
 	{location: "/Downloads"},
 	{location: "/Music"},
@@ -34,8 +37,12 @@ var bookmarks = Bookmarks{
 
 // findCommand returns a Cmd struct for the find Command
 // to search in a given location for a given value.
-func findCommand(loc, value string) *exec.Cmd {
-	return exec.Command("find", loc, "-iname", "'*"+value+"*'")
+func findCommand(loc, value string) (*exec.Cmd, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	return exec.Command("find", usr.HomeDir+loc, "-iname", "'*"+value+"*'"), nil
 }
 
 // locateCommand returns a Cmd struct for the locate Command.
