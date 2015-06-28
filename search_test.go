@@ -23,6 +23,14 @@ func TestFindCommand(t *testing.T) {
 		"-iname", "'*hallo*'"})
 }
 
+func TestFindCommandBinaries(t *testing.T) {
+	assert := assert.New(t)
+	cmd := findCommandBinaries("/usr/bin", "hallo")
+	assert.Equal(cmd.Path, "/usr/bin/find")
+	assert.Equal(cmd.Args, []string{"find", "/usr/bin",
+		"-iname", "'*hallo*'"})
+}
+
 func TestLocateCommand(t *testing.T) {
 	assert := assert.New(t)
 	cmd := locateCommand("hallo")
