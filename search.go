@@ -46,7 +46,7 @@ var binaries = Binaries{
 // func findQuery(query string) ([]Searchresult, error) {
 // }
 
-// findCommand returns a Cmd struct for the find Command
+// findCommandBookmarks returns a Cmd struct for the find Command
 // to search in a given location for a given value.
 func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
 	usr, err := user.Current()
@@ -74,5 +74,4 @@ func NewSearchResult(line string) *Searchresult {
 	sr.name = strings.Split(file, ".")[0]
 	sr.fullpath = line
 	return &sr
-
 }
