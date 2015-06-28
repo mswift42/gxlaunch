@@ -48,7 +48,7 @@ var binaries = Binaries{
 
 // findCommand returns a Cmd struct for the find Command
 // to search in a given location for a given value.
-func findCommand(loc, value string) (*exec.Cmd, error) {
+func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
 	usr, err := user.Current()
 	if err != nil {
 		return nil, err
