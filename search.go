@@ -55,6 +55,9 @@ func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
 	}
 	return exec.Command("find", usr.HomeDir+loc, "-iname", "'*"+value+"*'"), nil
 }
+func findCommandBinaries(loc, value string) *exec.Cmd {
+	return exec.Command("find", loc, "-iname", "'*"+value+"*'")
+}
 
 // locateCommand returns a Cmd struct for the locate Command.
 // locate's output is limited to 20 results, case is ignored and
