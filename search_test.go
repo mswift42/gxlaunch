@@ -8,13 +8,13 @@ import (
 
 func TestFindCommand(t *testing.T) {
 	assert := assert.New(t)
-	cmd, err := findCommand("", "hallo")
+	cmd, err := findCommandBookmarks("", "hallo")
 	if err != nil {
 		panic(err)
 	}
 	assert.Equal(cmd.Path, "/usr/bin/find")
 	assert.Equal(cmd.Args, []string{"find", "/home/severin", "-iname", "'*hallo*'"})
-	cmd2, err := findCommand("/Documents", "hallo")
+	cmd2, err := findCommandBookmarks("/Documents", "hallo")
 	if err != nil {
 		panic(err)
 	}
