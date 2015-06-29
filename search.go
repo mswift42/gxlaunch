@@ -69,6 +69,19 @@ func findbinaries(query string, c chan []Searchresult) {
 	c <- res
 }
 
+// commandOutput runs an exec.Cmd, builds for every line of the output
+// a new Searchresult, and passes these into channel c.
+func commandOutput(cmd *exec.Cmd, c chan []Searchresult) {
+	out, _ := cmd.Output()
+	res := make([]Searchresult, 0)
+	split := strings.Split(string(out), "\n")
+	for _, i := range split {
+		sr := NewSearchResult(i)
+		res = append(res, *sr)
+	}
+	c <- res
+}
+
 // findCommandBookmarks returns a Cmd struct for the find Command
 // to search in a given location for a given value.
 func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
