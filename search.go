@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 	"os/user"
 	"path"
@@ -54,9 +55,28 @@ func findQuery(query string) []Searchresult {
 	return results
 }
 
+func locateQuery(query string) []Searchresult {
+	results := make([]Searchresult, 0)
+	c := make(chan []Searchresult, 0)
+	go commandOutput(locateCommand(query), c)
+	res := <-c
+	results = append(results, res...)
+	return results
+}
+
 func findbinaries(query string, c chan []Searchresult) {
 	for _, i := range binaries {
 		go commandOutput(findCommandBinaries(i.location, query), c)
+	}
+}
+
+func findbookmarks(query string, c chan []Searchresult) {
+	for _, i := range bookmarks {
+		findbook, err := findCommandBookmarks(i.location, query)
+		if err != nil {
+			panic(err)
+		}
+		go commandOutput(findbook, c)
 	}
 }
 
@@ -102,4 +122,10 @@ func NewSearchResult(line string) *Searchresult {
 	sr.name = strings.Split(file, ".")[0]
 	sr.fullpath = line
 	return &sr
+}
+func main() {
+	query := findQuery("google")
+	fmt.Println(query)
+	loc := locateQuery("webcomponents")
+	fmt.Println(loc)
 }
