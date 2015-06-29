@@ -100,7 +100,7 @@ func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
 		return nil, err
 	}
 	return exec.Command("find", usr.HomeDir+loc, "-maxdepth", "2",
-		"-iname", "'*"+value+"*'"), nil
+		"-iname", "*"+value+"*"), nil
 }
 func findCommandBinaries(loc, value string) *exec.Cmd {
 	return exec.Command("find", loc, "-maxdepth", "2", "-iname", "*"+value+"*")
