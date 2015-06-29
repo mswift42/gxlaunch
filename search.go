@@ -55,13 +55,13 @@ func findQuery(query string) []Searchresult {
 	return results
 }
 
+// locateQuery runs the locate command for a query string and returns
+// a slice of []Searchresult with its results.
 func locateQuery(query string) []Searchresult {
-	results := make([]Searchresult, 0)
 	c := make(chan []Searchresult, 0)
 	go commandOutput(locateCommand(query), c)
 	res := <-c
-	results = append(results, res...)
-	return results
+	return res
 }
 
 func findbinaries(query string, c chan []Searchresult) {
