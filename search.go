@@ -43,8 +43,16 @@ var binaries = Binaries{
 
 // findQuery uses the 'find' command to search a given string
 // in an array of Places.
-// func findQuery(query string) ([]Searchresult, error) {
-// }
+func findQuery(query string) []Searchresult {
+	results := make([]Searchresult, 0)
+	c := make(chan []Searchresult)
+	go findbinaries(query, c)
+	go findbookmarks(query, c)
+	bin, book := <-c, <-c
+	results = append(results, bin...)
+	results = append(results, book...)
+	return results
+}
 
 // findCommandBookmarks returns a Cmd struct for the find Command
 // to search in a given location for a given value.
@@ -53,7 +61,8 @@ func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
 	if err != nil {
 		return nil, err
 	}
-	return exec.Command("find", usr.HomeDir+loc, "-iname", "'*"+value+"*'"), nil
+	return exec.Command("find", usr.HomeDir+loc,
+		"-iname", "'*"+value+"*'"), nil
 }
 func findCommandBinaries(loc, value string) *exec.Cmd {
 	return exec.Command("find", loc, "-iname", "'*"+value+"*'")
