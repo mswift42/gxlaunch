@@ -55,18 +55,9 @@ func findQuery(query string) []Searchresult {
 }
 
 func findbinaries(query string, c chan []Searchresult) {
-	output := ""
-	res := make([]Searchresult, 0)
 	for _, i := range binaries {
-		out, _ := findCommandBinaries(i.location, query).Output()
-		output += string(out)
+		go commandOutput(findCommandBinaries(i.location, query), c)
 	}
-	split := strings.Split(output, "\n")
-	for _, i := range split {
-		sr := NewSearchResult(i)
-		res = append(res, *sr)
-	}
-	c <- res
 }
 
 // commandOutput runs an exec.Cmd, builds for every line of the output
