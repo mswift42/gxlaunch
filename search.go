@@ -54,6 +54,21 @@ func findQuery(query string) []Searchresult {
 	return results
 }
 
+func findbinaries(query string, c chan []Searchresult) {
+	output := ""
+	res := make([]Searchresult, 0)
+	for _, i := range binaries {
+		out, _ := findCommandBinaries(i.location, query).Output()
+		output += string(out)
+	}
+	split := strings.Split(output, "\n")
+	for _, i := range split {
+		sr := NewSearchResult(i)
+		res = append(res, *sr)
+	}
+	c <- res
+}
+
 // findCommandBookmarks returns a Cmd struct for the find Command
 // to search in a given location for a given value.
 func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
