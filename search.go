@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os/exec"
 	"os/user"
 	"path"
@@ -30,11 +29,11 @@ type Binaries []Places
 
 var bookmarks = Bookmarks{
 	{location: ""},
-	{location: "/Documents"},
-	{location: "/Downloads"},
-	{location: "/Music"},
-	{location: "/Pictures"},
-	{location: "/Videos"},
+	// {location: "/Documents"},
+	// {location: "/Downloads"},
+	// {location: "/Music"},
+	// {location: "/Pictures"},
+	// {location: "/Videos"},
 }
 var binaries = Binaries{
 	{location: "/usr/bin"},
@@ -100,11 +99,11 @@ func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
 	if err != nil {
 		return nil, err
 	}
-	return exec.Command("find", usr.HomeDir+loc,
+	return exec.Command("find", usr.HomeDir+loc, "-maxdepth", "2",
 		"-iname", "'*"+value+"*'"), nil
 }
 func findCommandBinaries(loc, value string) *exec.Cmd {
-	return exec.Command("find", loc, "-iname", "'*"+value+"*'")
+	return exec.Command("find", loc, "-maxdepth", "2", "-iname", "*"+value+"*")
 }
 
 // locateCommand returns a Cmd struct for the locate Command.
@@ -124,8 +123,7 @@ func NewSearchResult(line string) *Searchresult {
 	return &sr
 }
 func main() {
-	query := findQuery("google")
-	fmt.Println(query)
-	loc := locateQuery("webcomponents")
-	fmt.Println(loc)
+	cmd := exec.Command("find", "/usr/bin", "-maxdepth", "2", "-iname", "*go*")
+	cmd2 := exec.Command("head", "-10")
+	cmd2.Stdin, _ = cmd.StdoutPipe()
 }
