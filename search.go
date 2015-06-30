@@ -48,12 +48,12 @@ var binaries = Binaries{
 // in an array of Places.
 func findQuery(query string) []Searchresult {
 	results := make([]Searchresult, 0)
-	c := make(chan []Searchresult)
+	c := make(chan Searchresult)
 	go findbinaries(query, c)
 	go findbookmarks(query, c)
 	bin, book := <-c, <-c
-	results = append(results, bin...)
-	results = append(results, book...)
+	results = append(results, bin)
+	results = append(results, book)
 	return results
 }
 
@@ -72,13 +72,13 @@ func findbinaries(query string, c chan Searchresult) {
 	}
 }
 
-func findbookmarks(query string, c chan []Searchresult) {
+func findbookmarks(query string, c chan Searchresult) {
 	for _, i := range bookmarks {
 		findbook, err := findCommandBookmarks(i.location, query)
 		if err != nil {
 			panic(err)
 		}
-		go commandOutput(findbook, c)
+		go findCommandOutput(findbook, c)
 	}
 }
 
@@ -172,4 +172,5 @@ func main() {
 	if err := find.Wait(); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(findQuery("webcomponents"))
 }
