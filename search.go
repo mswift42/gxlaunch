@@ -32,11 +32,11 @@ type Binaries []Places
 
 var bookmarks = Bookmarks{
 	{location: ""},
-	// {location: "/Documents"},
-	// {location: "/Downloads"},
-	// {location: "/Music"},
-	// {location: "/Pictures"},
-	// {location: "/Videos"},
+	{location: "/Documents"},
+	{location: "/Downloads"},
+	{location: "/Music"},
+	{location: "/Pictures"},
+	{location: "/Videos"},
 }
 var binaries = Binaries{
 	{location: "/usr/bin"},
@@ -44,16 +44,23 @@ var binaries = Binaries{
 	{location: "/opt"},
 }
 
+func Search(query string) []Searchresult {
+	results := make([]Searchresult, 0)
+	results = append(results, findQuery(query)...)
+	results = append(results, locateQuery(query)...)
+	return results
+}
+
 // findQuery uses the 'find' command to search a given string
 // in an array of Places.
 func findQuery(query string) []Searchresult {
 	results := make([]Searchresult, 0)
-	c := make(chan Searchresult)
+	c := make(chan []Searchresult)
 	go findbinaries(query, c)
 	go findbookmarks(query, c)
 	bin, book := <-c, <-c
-	results = append(results, bin)
-	results = append(results, book)
+	results = append(results, bin...)
+	results = append(results, book...)
 	return results
 }
 
@@ -66,13 +73,13 @@ func locateQuery(query string) []Searchresult {
 	return res
 }
 
-func findbinaries(query string, c chan Searchresult) {
+func findbinaries(query string, c chan []Searchresult) {
 	for _, i := range binaries {
 		go findCommandOutput(findCommandBinaries(i.location, query), c)
 	}
 }
 
-func findbookmarks(query string, c chan Searchresult) {
+func findbookmarks(query string, c chan []Searchresult) {
 	for _, i := range bookmarks {
 		findbook, err := findCommandBookmarks(i.location, query)
 		if err != nil {
@@ -95,7 +102,8 @@ func commandOutput(cmd *exec.Cmd, c chan []Searchresult) {
 	c <- res
 }
 
-func findCommandOutput(cmd *exec.Cmd, c chan Searchresult) {
+func findCommandOutput(cmd *exec.Cmd, c chan []Searchresult) {
+	results := make([]Searchresult, 0)
 	head := exec.Command("head", "-10")
 	head.Stdin, _ = cmd.StdoutPipe()
 	reader, err := head.StdoutPipe()
@@ -105,7 +113,8 @@ func findCommandOutput(cmd *exec.Cmd, c chan Searchresult) {
 	scanner := bufio.NewScanner(reader)
 	go func() {
 		for scanner.Scan() {
-			c <- *NewSearchResult(scanner.Text())
+			res := NewSearchResult(scanner.Text())
+			results = append(results, *res)
 		}
 	}()
 	if err := cmd.Start(); err != nil {
@@ -117,6 +126,7 @@ func findCommandOutput(cmd *exec.Cmd, c chan Searchresult) {
 	if err := cmd.Wait(); err != nil {
 		log.Fatal(err)
 	}
+	c <- results
 }
 
 // findCommandBookmarks returns a Cmd struct for the find Command
@@ -164,13 +174,13 @@ func main() {
 		}
 	}()
 	if err := find.Start(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	if err := head.Start(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	if err := find.Wait(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	fmt.Println(findQuery("webcomponents"))
+	fmt.Println(Search("sex"))
 }
