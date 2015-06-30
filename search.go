@@ -44,6 +44,8 @@ var binaries = Binaries{
 	{location: "/opt"},
 }
 
+// Search appends the results of calling findQuery and locateQuery for a given
+// query string, and returns them.
 func Search(query string) []Searchresult {
 	results := make([]Searchresult, 0)
 	results = append(results, findQuery(query)...)
@@ -160,27 +162,5 @@ func NewSearchResult(line string) *Searchresult {
 	return &sr
 }
 func main() {
-	find := exec.Command("find", "/usr/bin", "-maxdepth", "2", "-iname", "*go*")
-	head := exec.Command("head", "-10")
-	head.Stdin, _ = find.StdoutPipe()
-	reader, err := head.StdoutPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
-	scanner := bufio.NewScanner(reader)
-	go func() {
-		for scanner.Scan() {
-			fmt.Println("some strings: ", scanner.Text())
-		}
-	}()
-	if err := find.Start(); err != nil {
-		panic(err)
-	}
-	if err := head.Start(); err != nil {
-		panic(err)
-	}
-	if err := find.Wait(); err != nil {
-		panic(err)
-	}
 	fmt.Println(Search("sex"))
 }
