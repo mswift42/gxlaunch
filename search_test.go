@@ -13,14 +13,14 @@ func TestFindCommand(t *testing.T) {
 		panic(err)
 	}
 	assert.Equal(cmd.Path, "/usr/bin/find")
-	assert.Equal(cmd.Args, []string{"find", "/home/severin", "-iname", "'*hallo*'"})
+	assert.Equal(cmd.Args, []string{"find", "/home/severin", "-maxdepth", "2", "-iname", "*hallo*"})
 	cmd2, err := findCommandBookmarks("/Documents", "hallo")
 	if err != nil {
 		panic(err)
 	}
 	assert.Equal(cmd2.Path, "/usr/bin/find")
-	assert.Equal(cmd2.Args, []string{"find", "/home/severin/Documents",
-		"-iname", "'*hallo*'"})
+	assert.Equal(cmd2.Args, []string{"find", "/home/severin/Documents", "-maxdepth", "2",
+		"-iname", "*hallo*"})
 }
 
 func TestFindCommandBinaries(t *testing.T) {
