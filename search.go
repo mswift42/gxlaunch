@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
+	"log"
 	"os/exec"
 	"os/user"
 	"path"
@@ -63,9 +66,9 @@ func locateQuery(query string) []Searchresult {
 	return res
 }
 
-func findbinaries(query string, c chan []Searchresult) {
+func findbinaries(query string, c chan Searchresult) {
 	for _, i := range binaries {
-		go commandOutput(findCommandBinaries(i.location, query), c)
+		go findCommandOutput(findCommandBinaries(i.location, query), c)
 	}
 }
 
@@ -90,6 +93,30 @@ func commandOutput(cmd *exec.Cmd, c chan []Searchresult) {
 		res = append(res, *sr)
 	}
 	c <- res
+}
+
+func findCommandOutput(cmd *exec.Cmd, c chan Searchresult) {
+	head := exec.Command("head", "-10")
+	head.Stdin, _ = cmd.StdoutPipe()
+	reader, err := head.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	scanner := bufio.NewScanner(reader)
+	go func() {
+		for scanner.Scan() {
+			c <- *NewSearchResult(scanner.Text())
+		}
+	}()
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
+	if err := head.Start(); err != nil {
+		log.Fatal(err)
+	}
+	if err := cmd.Wait(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // findCommandBookmarks returns a Cmd struct for the find Command
@@ -123,7 +150,26 @@ func NewSearchResult(line string) *Searchresult {
 	return &sr
 }
 func main() {
-	cmd := exec.Command("find", "/usr/bin", "-maxdepth", "2", "-iname", "*go*")
-	cmd2 := exec.Command("head", "-10")
-	cmd2.Stdin, _ = cmd.StdoutPipe()
+	find := exec.Command("find", "/usr/bin", "-maxdepth", "2", "-iname", "*go*")
+	head := exec.Command("head", "-10")
+	head.Stdin, _ = find.StdoutPipe()
+	reader, err := head.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	scanner := bufio.NewScanner(reader)
+	go func() {
+		for scanner.Scan() {
+			fmt.Println("some strings: ", scanner.Text())
+		}
+	}()
+	if err := find.Start(); err != nil {
+		log.Fatal(err)
+	}
+	if err := head.Start(); err != nil {
+		log.Fatal(err)
+	}
+	if err := find.Wait(); err != nil {
+		log.Fatal(err)
+	}
 }
