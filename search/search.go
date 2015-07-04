@@ -30,14 +30,13 @@ type Bookmarks []Places
 type Binaries []Places
 
 var bookmarks = Bookmarks{
+	{location: ""},
 	{location: "/Documents"},
 	{location: "/Downloads"},
 	{location: "/Music"},
 	{location: "/Pictures"},
 	{location: "/Videos"},
 }
-
-var home = Places{location: ""}
 
 var binaries = Binaries{
 	{location: "/usr/bin"},
