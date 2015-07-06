@@ -6,6 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNameList(t *testing.T) {
+	sr1 := NewSearchResult("Documents/GoBook.pdf")
+	sr2 := NewSearchResult("Documents/Dive_Into_Python3.pdf")
+	results := Searchresults{*sr1, *sr2}
+	assert := assert.New(t)
+	names := results.NameList()
+	assert.Equal(len(names), 2)
+	assert.Equal(names[0], "GoBook")
+	assert.Equal(names[1], "Dive_Into_Python3")
+
+}
+
 func TestFindCommand(t *testing.T) {
 	assert := assert.New(t)
 	cmd, err := findCommandBookmarks("", "hallo")
