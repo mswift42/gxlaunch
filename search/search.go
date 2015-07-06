@@ -2,7 +2,6 @@ package search
 
 import (
 	"bufio"
-	"log"
 	"os/exec"
 	"os/user"
 	"path"
@@ -15,6 +14,9 @@ type Searchresult struct {
 	fullpath  string
 	thumbnail string
 }
+
+// Searchresults is a slice of Searchresults
+type Searchresults []Searchresult
 
 // Places represents the bookmarked locations of a Gnome desktop, e.g
 // Videos, Documents, Music, Home... .
@@ -49,7 +51,7 @@ var binaries = Binaries{
 func Search(query string) []Searchresult {
 	results := make([]Searchresult, 0)
 	results = append(results, FindQuery(query)...)
-	results = append(results, LocateQuery(query)...)
+	// results = append(results, LocateQuery(query)...)
 	return results
 }
 
@@ -106,11 +108,11 @@ func commandOutput(cmd *exec.Cmd, c chan []Searchresult) {
 
 func findCommandOutput(cmd *exec.Cmd, c chan []Searchresult) {
 	results := make([]Searchresult, 0)
-	head := exec.Command("head", "-10")
+	head := exec.Command("head", "-5")
 	head.Stdin, _ = cmd.StdoutPipe()
 	reader, err := head.StdoutPipe()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	scanner := bufio.NewScanner(reader)
 	go func() {
@@ -120,13 +122,13 @@ func findCommandOutput(cmd *exec.Cmd, c chan []Searchresult) {
 		}
 	}()
 	if err := cmd.Start(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	if err := head.Start(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	if err := cmd.Wait(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	c <- results
 }
