@@ -18,6 +18,15 @@ type Searchresult struct {
 // Searchresults is a slice of Searchresults
 type Searchresults []Searchresult
 
+// NameList is a slice listing the field name for every Searchresult.
+func (s Searchresults) NameList() []string {
+	results := make([]string, len(s))
+	for _, i := range s {
+		results = append(results, i.name)
+	}
+	return results
+}
+
 // Places represents the bookmarked locations of a Gnome desktop, e.g
 // Videos, Documents, Music, Home... .
 type Places struct {
@@ -48,7 +57,7 @@ var binaries = Binaries{
 
 // Search appends the results of calling findQuery and locateQuery for a given
 // query string, and returns them.
-func Search(query string) []Searchresult {
+func Search(query string) Searchresults {
 	results := make([]Searchresult, 0)
 	results = append(results, FindQuery(query)...)
 	// results = append(results, LocateQuery(query)...)
