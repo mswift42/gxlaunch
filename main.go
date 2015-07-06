@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/google/gxui"
 	"github.com/google/gxui/drivers/gl"
 	"github.com/google/gxui/math"
@@ -23,8 +21,11 @@ func appMain(driver gxui.Driver) {
 	adapter := gxui.CreateDefaultAdapter()
 
 	searchBox.OnKeyDown(func(ev gxui.KeyboardEvent) {
-		fmt.Println(search.Search(searchBox.Text()))
+		adapter.SetItems(search.Search(searchBox.Text()))
 	})
+
+	droplist := theme.CreateDropDownList()
+	droplist.SetAdapter(adapter)
 
 	window.AddChild(searchBox)
 	window.OnClose(driver.Terminate)
