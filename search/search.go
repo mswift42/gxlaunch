@@ -20,9 +20,9 @@ type Searchresults []Searchresult
 
 // NameList is a slice listing the field name for every Searchresult.
 func (s Searchresults) NameList() []string {
-	results := make([]string, 0)
-	for _, i := range s {
-		results = append(results, i.name)
+	results := make([]string, len(s))
+	for i := range s {
+		results[i] = s[i].name
 	}
 	return results
 }
