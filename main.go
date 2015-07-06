@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/google/gxui"
 	"github.com/google/gxui/drivers/gl"
 	"github.com/google/gxui/math"
 	"github.com/google/gxui/themes/dark"
+	"github.com/mswift42/gxlaunch/search"
 )
 
 func appMain(driver gxui.Driver) {
@@ -17,7 +20,10 @@ func appMain(driver gxui.Driver) {
 	searchBox.SetDesiredWidth(500)
 	searchBox.SetMargin(math.Spacing{L: 4, T: 2, R: 4, B: 2})
 
+	adapter := gxui.CreateDefaultAdapter()
+
 	searchBox.OnKeyDown(func(ev gxui.KeyboardEvent) {
+		fmt.Println(search.Search(searchBox.Text()))
 	})
 
 	window.AddChild(searchBox)
