@@ -14,6 +14,9 @@ func appMain(driver gxui.Driver) {
 	window := theme.CreateWindow(500, 200, "Launch")
 	window.SetBackgroundBrush(gxui.CreateBrush(gxui.Gray10))
 
+	layout := theme.CreateLinearLayout()
+	layout.SetDirection(gxui.TopToBottom)
+
 	searchBox := theme.CreateTextBox()
 	searchBox.SetDesiredWidth(500)
 	searchBox.SetMargin(math.Spacing{L: 4, T: 2, R: 4, B: 2})
@@ -21,7 +24,8 @@ func appMain(driver gxui.Driver) {
 	adapter := gxui.CreateDefaultAdapter()
 
 	searchBox.OnKeyDown(func(ev gxui.KeyboardEvent) {
-		adapter.SetItems(search.Search(searchBox.Text()))
+		res := search.Search(searchBox.Text())
+		adapter.SetItems(res.NameList())
 	})
 
 	droplist := theme.CreateDropDownList()
