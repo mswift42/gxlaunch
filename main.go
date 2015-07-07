@@ -35,7 +35,7 @@ func appMain(driver gxui.Driver) {
 
 	layout.AddChild(droplist)
 
-	window.AddChild(searchBox)
+	window.AddChild(layout)
 	window.OnClose(driver.Terminate)
 
 }
