@@ -21,6 +21,8 @@ func appMain(driver gxui.Driver) {
 	searchBox.SetDesiredWidth(500)
 	searchBox.SetMargin(math.Spacing{L: 4, T: 2, R: 4, B: 2})
 
+	layout.AddChild(searchBox)
+
 	adapter := gxui.CreateDefaultAdapter()
 
 	searchBox.OnKeyDown(func(ev gxui.KeyboardEvent) {
@@ -30,6 +32,8 @@ func appMain(driver gxui.Driver) {
 
 	droplist := theme.CreateDropDownList()
 	droplist.SetAdapter(adapter)
+
+	layout.AddChild(droplist)
 
 	window.AddChild(searchBox)
 	window.OnClose(driver.Terminate)
