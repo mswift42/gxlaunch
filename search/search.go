@@ -16,7 +16,7 @@ type Searchresult struct {
 }
 
 // Searchresults is a slice of Searchresults
-type Searchresults []Searchresult
+type Searchresults []*Searchresult
 
 // NameList is a slice listing the field name for every Searchresult.
 func (s Searchresults) NameList() []string {
@@ -58,7 +58,7 @@ var binaries = Binaries{
 // Search appends the results of calling findQuery and locateQuery for a given
 // query string, and returns them.
 func Search(query string) Searchresults {
-	results := make([]Searchresult, 0)
+	results := make([]*Searchresult, 0)
 	results = append(results, FindQuery(query)...)
 	// results = append(results, LocateQuery(query)...)
 	return results
@@ -66,9 +66,9 @@ func Search(query string) Searchresults {
 
 // FindQuery uses the 'find' command to search a given string
 // in an array of Places.
-func FindQuery(query string) []Searchresult {
-	results := make([]Searchresult, 0)
-	c := make(chan []Searchresult)
+func FindQuery(query string) []*Searchresult {
+	results := make([]*Searchresult, 0)
+	c := make(chan []*Searchresult)
 	go findbinaries(query, c)
 	go findbookmarks(query, c)
 	bin, book := <-c, <-c
@@ -79,20 +79,20 @@ func FindQuery(query string) []Searchresult {
 
 // LocateQuery runs the locate command for a query string and returns
 // a slice of []Searchresult with its results.
-func LocateQuery(query string) []Searchresult {
-	c := make(chan []Searchresult, 0)
+func LocateQuery(query string) []*Searchresult {
+	c := make(chan []*Searchresult, 0)
 	go commandOutput(locateCommand(query), c)
 	res := <-c
 	return res
 }
 
-func findbinaries(query string, c chan []Searchresult) {
+func findbinaries(query string, c chan []*Searchresult) {
 	for _, i := range binaries {
 		go findCommandOutput(findCommandBinaries(i.location, query), c)
 	}
 }
 
-func findbookmarks(query string, c chan []Searchresult) {
+func findbookmarks(query string, c chan []*Searchresult) {
 	for _, i := range bookmarks {
 		findbook, err := findCommandBookmarks(i.location, query)
 		if err != nil {
@@ -104,19 +104,19 @@ func findbookmarks(query string, c chan []Searchresult) {
 
 // commandOutput runs an exec.Cmd, builds for every line of the output
 // a new Searchresult, and passes these into channel c.
-func commandOutput(cmd *exec.Cmd, c chan []Searchresult) {
+func commandOutput(cmd *exec.Cmd, c chan []*Searchresult) {
 	out, _ := cmd.Output()
-	res := make([]Searchresult, 0)
+	res := make([]*Searchresult, 0)
 	split := strings.Split(string(out), "\n")
 	for _, i := range split {
 		sr := NewSearchResult(i)
-		res = append(res, *sr)
+		res = append(res, sr)
 	}
 	c <- res
 }
 
-func findCommandOutput(cmd *exec.Cmd, c chan []Searchresult) {
-	results := make([]Searchresult, 0)
+func findCommandOutput(cmd *exec.Cmd, c chan []*Searchresult) {
+	results := make([]*Searchresult, 0)
 	head := exec.Command("head", "-5")
 	head.Stdin, _ = cmd.StdoutPipe()
 	reader, err := head.StdoutPipe()
@@ -127,7 +127,7 @@ func findCommandOutput(cmd *exec.Cmd, c chan []Searchresult) {
 	go func() {
 		for scanner.Scan() {
 			res := NewSearchResult(scanner.Text())
-			results = append(results, *res)
+			results = append(results, res)
 		}
 	}()
 	if err := cmd.Start(); err != nil {
