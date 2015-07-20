@@ -2,17 +2,39 @@ package main
 
 import (
 	"fmt"
-	"os/exec"
+	"strings"
 
 	"labix.org/v2/pipe"
 )
 
-func main() {
-	cmd := exec.Command("find", "/usr/bin", "-maxdepth", "2", "-iname", "*go*")
+func findCommandBinaries(loc, value string) []string {
+	return []string{loc, "-maxdepth", "2", "-iname", "*" + value + "*"}
+}
+
+func findCommandOutput(cmd []string, c chan []string) {
+	results := make([]string, 0)
 	line := pipe.Line(
-		pipe.Exec(cmd.Path, cmd.Args...),
+		pipe.Exec("find", cmd...),
 		pipe.Exec("head", "-10"),
 	)
-	out, _ := pipe.Output(line)
-	fmt.Println(string(out))
+	output, err := pipe.Output(line)
+	if err != nil {
+		fmt.Println(string(output))
+		panic(err)
+	}
+	split := strings.Split(string(output), "\n")
+	for _, i := range split {
+		results = append(results, i)
+	}
+	c <- results
+}
+
+func main() {
+	results := make([]string, 0)
+	c := make(chan []string)
+	cmd := findCommandBinaries("/usr/bin", "go")
+	go findCommandOutput(cmd, c)
+	bin := <-c
+	results = append(results, bin...)
+	fmt.Println(results)
 }
