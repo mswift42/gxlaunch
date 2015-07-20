@@ -116,37 +116,40 @@ func commandOutput(cmd *exec.Cmd, c chan []Searchresult) {
 	c <- res
 }
 
-func findCommandOutput(cmd *exec.Cmd, c chan []Searchresult) {
+func findCommandOutput(cmd []string, c chan []Searchresult) {
 	results := make([]Searchresult, 0)
 	line := pipe.Line(
-		pipe.Exec(cmd.Path, cmd.Args...),
+		pipe.Exec("find", cmd...),
 		pipe.Exec("head", "-10"),
 	)
 	output, err := pipe.Output(line)
 	if err != nil {
 		panic(err)
 	}
-	split := strings.Split()
+	split := strings.Split(string(output), "\n")
+	for _, i := range split {
+		results = append(results, *NewSearchResult(i))
+	}
 	c <- results
 }
 
 // findCommandBookmarks returns a Cmd struct for the find Command
 // to search in a given location for a given value.
-func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
+func findCommandBookmarks(loc, value string) ([]string, error) {
 	usr, err := user.Current()
 	if err != nil {
 		return nil, err
 	}
 	if loc == "" {
-		return exec.Command("find", usr.HomeDir+loc, "-maxdepth", "1",
-			"-iname", "*"+value+"*"), nil
+		return []string{usr.HomeDir + loc, "-maxdepth", "1",
+			"-iname", "*" + value + "*"}, nil
 	}
-	return exec.Command("find", usr.HomeDir+loc, "-maxdepth", "2",
-		"-iname", "*"+value+"*"), nil
+	return []string{usr.HomeDir + loc, "-maxdepth", "2",
+		"-iname", "*" + value + "*"}, nil
 }
 
-func findCommandBinaries(loc, value string) *exec.Cmd {
-	return exec.Command("find", loc, "-maxdepth", "2", "-iname", "*"+value+"*")
+func findCommandBinaries(loc, value string) []string {
+	return []string{loc, "-maxdepth", "2", "-iname", "*" + value + "*"}
 }
 
 // locateCommand returns a Cmd struct for the locate Command.
