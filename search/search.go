@@ -73,6 +73,7 @@ func FindQuery(query string) []Searchresult {
 	go findbinaries(query, c)
 	go findbookmarks(query, c)
 	bin, book := <-c, <-c
+	bin := <-c
 	results = append(results, bin...)
 	results = append(results, book...)
 	return results
