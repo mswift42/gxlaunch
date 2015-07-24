@@ -135,21 +135,21 @@ func findCommandOutput(cmd []string, c chan []Searchresult) {
 
 // findCommandBookmarks returns a Cmd struct for the find Command
 // to search in a given location for a given value.
-func findCommandBookmarks(loc, value string) ([]string, error) {
+func findCommandBookmarks(loc, value string) (*exec.Cmd, error) {
 	usr, err := user.Current()
 	if err != nil {
 		return nil, err
 	}
 	if loc == "" {
-		return []string{usr.HomeDir + loc, "-maxdepth", "1",
-			"-iname", "*" + value + "*"}, nil
+		return exec.Command("find", usr.HomeDir+loc, "-maxdepth", "1",
+			"-iname", "*"+value+"*"), nil
 	}
-	return []string{usr.HomeDir + loc, "-maxdepth", "2",
-		"-iname", "*" + value + "*"}, nil
+	return exec.Command("find", usr.HomeDir+loc, "-maxdepth", "2",
+		"-iname", "*"+value+"*"), nil
 }
 
-func findCommandBinaries(loc, value string) []string {
-	return []string{loc, "-maxdepth", "2", "-iname", "*" + value + "*"}
+func findCommandBinaries(loc, value string) *exec.Cmd {
+	return exec.Command(loc, "-maxdepth", "2", "-iname", "*"+value+"*")
 }
 
 // locateCommand returns a Cmd struct for the locate Command.
